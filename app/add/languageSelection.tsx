@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React, { useState } from "react";
+import React from "react";
 import { LANGUAGE_MAP } from "../types/types";
 
 // Assuming this LANGUAGE_MAP is defined in your types.ts file
@@ -28,9 +28,6 @@ export default function LanguageSelector({
   onLanguageChange,
   className = "",
 }: LanguageSelectorProps) {
-  // State to hold the currently selected language code
-  const [selectedLanguage, setSelectedLanguage] =
-    useState<string>(initialLanguageCode);
 
   const handleChange = (newLanguageCode: string) => {
     if (onLanguageChange) {

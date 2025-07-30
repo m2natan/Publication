@@ -27,19 +27,15 @@ export default function UpdatePublication() {
         return;
       }
       alert("Update successful!");
-    } catch (err: any) {
-      // If the server responded with error status, it can be in err.response.data
-      if (err.response && err.response.data && err.response.data.error) {
-        alert("Error: " + err.response.data.error);
-      } else {
-        alert("Network error or server error.");
-      }
+    } catch (error) {
+      console.error("Updating failed:", error);
+    } finally {
+      setIsSubmitting(false); // End submission animation
     }
-    setIsSubmitting(false)
   }
   return (
     <form
-        onSubmit={handleSubmit}
+      onSubmit={handleSubmit}
       className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-xl shadow-md space-y-6 "
     >
       <h2 className="text-xl font-semibold text-center text-gray-800">

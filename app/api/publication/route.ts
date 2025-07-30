@@ -1,7 +1,6 @@
 import { getPublication } from "@/app/repository/get";
 import { updatePublication } from "@/app/repository/update";
 import { upsertPublication } from "@/app/repository/upsert";
-import UpdatePublication from "@/app/update/page";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -24,7 +23,8 @@ export async function PATCH(req: NextRequest) {
     const data = await req.json();
     const result = await updatePublication(data);
     return NextResponse.json({ success: true, data: result });
-  } catch (error: any) {
+  } catch (error) {
+  if (error instanceof Error) {
     if (error.message === "Publication not found") {
       return NextResponse.json(
         { success: false, error: error.message },
@@ -36,15 +36,16 @@ export async function PATCH(req: NextRequest) {
       { status: 400 }
     );
   }
+  }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const result = await getPublication();
     return NextResponse.json({ success: true, data: result });
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: "Get failed" },
+      { success: false, error: error },
       { status: 500 }
     );
   }

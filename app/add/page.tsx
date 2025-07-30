@@ -43,7 +43,7 @@ export default function AddPublication() {
         publication_id: combinedIdAndLanguage,
         count: form.count,
       };
-      const response = await axios.post("/api/publication", dataSend);
+      await axios.post("/api/publication", dataSend);
       setMessage({ type: "success", text: "Upsert successful! 🎉" });
       setForm({ publication_id: "", count: 0 });
       setSelectedLanguageCode("");
