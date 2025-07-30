@@ -1,3 +1,4 @@
+// eslint.config.js
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
@@ -11,6 +12,16 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  {
+    ignores: [
+      "node_modules/",
+      ".next/",
+      "lib/generated/", // <--- CRUCIAL: Add this line to ignore Prisma's generated client
+      "dist/",
+      "build/",
+    ],
+  },
 ];
 
 export default eslintConfig;
