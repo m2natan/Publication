@@ -1,5 +1,7 @@
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { getUserPermission } from "../server";
 import ClientButtons from "./ClientButtons";
+import { Button } from "@/components/ui/button";
 
 export default async function HomePage() {
   const user = await getUserPermission();
@@ -13,10 +15,21 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-row gap-[32px] row-start-2 items-center sm:items-start">
-        <ClientButtons roles={user.role} />
-      </main>
+  <div className="font-sans min-h-screen p-8 pb-20 sm:p-20 grid grid-rows-[auto_1fr_auto] gap-16">
+    
+    {/* Top bar with Logout button aligned right */}
+    <div className="flex justify-end">
+      <Button>
+        <LogoutLink>Logout</LogoutLink>
+      </Button>
     </div>
-  );
+
+    {/* Main content */}
+    <main className="flex flex-row gap-8 items-start justify-center row-start-2">
+      <ClientButtons roles={user.role} />
+    </main>
+
+  </div>
+);
+
 }
