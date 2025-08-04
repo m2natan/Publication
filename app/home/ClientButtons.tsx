@@ -11,22 +11,25 @@ type ClientButtonsProps = {
   roles: KindeAccessToken;
 };
 
-export default function ClientButtons({
-  roles,
-}: ClientButtonsProps) {
+export default function ClientButtons({ roles }: ClientButtonsProps) {
   const router = useRouter();
-const isUser = roles?.roles?.some(role => role.key === "PUBLICATION_ADMIN") ?? false;
+  const isAdmin =
+    roles?.roles?.some((role) => role.key === "PUBLICATION_ADMIN") ?? false;
+  const isUser =
+    roles?.roles?.some((role) => role.key === "PUBLICATION_USER") ?? false;
 
+  const noRoleUser = !roles?.roles || roles.roles.length === 0;
   return (
     <>
-      {isUser && (
+      {isAdmin && (
         <Button onClick={() => router.push("/add")}>Add an item</Button>
       )}
-      <Button onClick={() => router.push("/update")}>Update</Button>
-      <Button onClick={() => router.push("/generate")}>Generate</Button>
+      {isUser && <Button onClick={() => router.push("/update")}>Update</Button>}
+      {noRoleUser ? (
+        <Button onClick={() => router.push("/sample")}>Generate</Button>
+      ) : (
+        <Button onClick={() => router.push("/generate")}>Generate</Button>
+      )}
     </>
   );
-}
-function KindeRole(arg0: string) {
-  throw new Error("Function not implemented.");
 }

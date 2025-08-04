@@ -11,42 +11,26 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Publication } from "../types/types";
-import { Button } from "@/components/ui/button";
-import { Router } from "next/router";
-import { useRouter } from "next/navigation";
 
-export default function GeneratePublicationReport() {
-  const [publication, setPublication] = useState<Publication[]>([]);
+export default function GeneratePublicationSampleReport() {
+  const [publication, setPublication] = useState<Publication[]>();
   const [loading, setLoading] = useState(true);
 
-  const router = useRouter()
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get("/api/publication");
-        setPublication(res.data.data || []);
+        const res = await axios.get("/api/sample");
+        setPublication(res.data.data);
       } catch (error) {
         console.error("Failed to fetch publications:", error);
-        setPublication([]); // fallback
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, []);
+  }, []); // ← this is the fix
 
   if (loading) return <p>Loading...</p>;
-
-  if (!publication.length) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600 text-lg">No publications found.</p>
-        <br />
-        <Button onClick={()=> router.push("/add")}>Add</Button>
-      </div>
-    );
-  }
-
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-row gap-[32px] row-start-2 items-center sm:items-start">
@@ -60,16 +44,18 @@ export default function GeneratePublicationReport() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {publication.map((p: Publication, index: number) => (
-              <TableRow
-                key={p.publication_id}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-blue-100"}
-              >
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{p.publication_id}</TableCell>
-                <TableCell>{p.count}</TableCell>
-              </TableRow>
-            ))}
+            {publication && publication.length
+              ? publication.map((p: Publication, index: number) => (
+                  <TableRow
+                    key={p.publication_id}
+                    className={index % 2 === 0 ? "bg-gray-100" : "bg-blue-100"}
+                  >
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{p.publication_id}</TableCell>
+                    <TableCell>{p.count}</TableCell>
+                  </TableRow>
+                ))
+              : null}
           </TableBody>
         </Table>
       </main>

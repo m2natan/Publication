@@ -13,3 +13,9 @@ model Publication {
   publication_id String @unique
   count          Int
 }
+
+model PublicationSample {
+  id             Int    @id @default(autoincrement())
+  publication_id String @unique
+  count          Int
+}
