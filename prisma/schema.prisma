@@ -12,6 +12,7 @@ model Publication {
   id             Int    @id @default(autoincrement())
   publication_id String @unique
   count          Int
+  createdAt DateTime @default(now()) 
 }
 
 model PublicationSample {

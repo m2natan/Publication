@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Publication } from "../types/types";
+import { LANGUAGE_CODES, Publication } from "../types/types";
 import axios from "axios";
 import LanguageSelector from "./languageSelection";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -18,8 +18,9 @@ export default function AddPublication() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [searchResults, setSearchResults] = useState<Publication[]>([]);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
-  console.log(selectedLanguageCode);
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsSubmitting(true); // Start submission animation
@@ -28,7 +29,8 @@ export default function AddPublication() {
       !form.publication_id ||
       !selectedLanguageCode ||
       form.count === null ||
-      form.count === undefined || form.count === 0
+      form.count === undefined ||
+      form.count === 0
     ) {
       setMessage({
         type: "error",
@@ -38,21 +40,69 @@ export default function AddPublication() {
       return;
     }
     try {
-      const combinedIdAndLanguage = `${form.publication_id.toLowerCase()}-${selectedLanguageCode}`;
+      const hasLangCode = /-\w{2}$/i.test(form.publication_id.trim());
+
+      const baseId = form.publication_id.trim();
+      const combinedIdAndLanguage = hasLangCode
+        ? baseId // already has a -xx language code
+        : `${baseId.toLowerCase()}-${selectedLanguageCode}`;
       const dataSend: Publication = {
         publication_id: combinedIdAndLanguage,
         count: form.count,
       };
       await axios.post("/api/publication", dataSend);
-      setMessage({ type: "success", text: "Upsert successful! 🎉" });
+      setMessage({ type: "success", text: "Inserted successful! 🎉" });
       setForm({ publication_id: "", count: 0 });
       setSelectedLanguageCode("");
     } catch (error) {
       console.error("Upsert failed:", error);
-      setMessage({ type: "error", text: "Upsert unsuccessful! 🙁" });
+      setMessage({ type: "error", text: "Inserted unsuccessful! 🙁" });
     } finally {
       setIsSubmitting(false); // End submission animation
     }
+  }
+
+  async function onTyping(publication_id: string) {
+    setForm({ ...form, publication_id });
+
+    if (publication_id.length < 1) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `/api/publication/search?q=${publication_id}`
+      );
+      if (!response.data.success) {
+        alert("Error: " + response.data.error);
+        return;
+      }
+      setSearchResults(response.data.data); // assuming the server returns a list of publications
+      setShowDropdown(true);
+    } catch (error) {
+      console.error("Error fetching publications:", error);
+    }
+  }
+
+  function handleSelect(publication: Publication) {
+    const match = publication.publication_id.match(/-(\w{2})$/i);
+    const langCode = match ? match[1].toUpperCase() : "";
+    
+    setForm({
+      ...form,
+      publication_id: publication.publication_id.replace(/-\w{2}$/, ""),
+    });
+    setSearchResults([]);
+    setShowDropdown(false);
+    // Only update selectedLanguageCode if it's a known one
+    if (LANGUAGE_CODES.includes(langCode)) {
+      setSelectedLanguageCode(langCode);
+    }
+
+    setSearchResults([]);
+    setShowDropdown(false);
   }
   return (
     <form
@@ -94,10 +144,23 @@ export default function AddPublication() {
           type="text"
           value={form?.publication_id}
           placeholder="Enter Publication ID"
-          onChange={(e) => setForm({ ...form, publication_id: e.target.value })}
+          onChange={(e) => onTyping(e.target.value)}
           className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
+        {showDropdown && searchResults.length > 0 && (
+          <ul className="px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+            {searchResults.map((pub) => (
+              <li
+                key={pub.publication_id}
+                onClick={() => handleSelect(pub)}
+                className="p-2 hover:bg-blue-100 cursor-pointer"
+              >
+                {pub.publication_id}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <LanguageSelector
@@ -116,7 +179,7 @@ export default function AddPublication() {
         <input
           id="count"
           type="number"
-          value={form?.count === 0? "": form.count}
+          value={form?.count === 0 ? "" : form.count}
           placeholder="Enter Count"
           onChange={(e) => setForm({ ...form, count: Number(e.target.value) })}
           className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
