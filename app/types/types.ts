@@ -19,8 +19,8 @@ export const LANGUAGE_MAP: { [key: string]: string } = {
   TG: "Tigrinya",
   SO: "Somali",
   AF: "Afar",
-  SN: "Sidama",
-  WL: "Welatigna",
+  DM: "Sidama",
+  WL: "Welayta",
 };
 
 export const LANGUAGE_CODES = Object.keys(LANGUAGE_MAP); // ['AM', 'EN', ...]
