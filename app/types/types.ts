@@ -20,6 +20,7 @@ export const LANGUAGE_MAP: { [key: string]: string } = {
   SO: "Somali",
   AF: "Afar",
   SN: "Sidama",
+  WL: "Welatigna",
 };
 
 export const LANGUAGE_CODES = Object.keys(LANGUAGE_MAP); // ['AM', 'EN', ...]
