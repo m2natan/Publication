@@ -6,6 +6,10 @@ import {
 export interface Publication {
   publication_id: string;
   count: number;
+}
+export interface PublicationView {
+  publication_id: string;
+  count: number;
   updatedAt: Date;
 }
 

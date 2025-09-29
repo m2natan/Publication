@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/table";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Publication } from "../types/types";
+import { PublicationView } from "../types/types";
 import React from "react";
 
 export default function GeneratePublicationReport() {
-  const [publication, setPublication] = useState<Publication[]>([]);
+  const [publication, setPublication] = useState<PublicationView[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedLanguages, setExpandedLanguages] = useState<string[]>([]);
 
@@ -57,7 +57,7 @@ export default function GeneratePublicationReport() {
     if (!acc[lang]) acc[lang] = [];
     acc[lang].push(pub);
     return acc;
-  }, {} as Record<string, Publication[]>);
+  }, {} as Record<string, PublicationView[]>);
 
   const toggleLanguage = (lang: string) => {
     setExpandedLanguages((prev) =>
