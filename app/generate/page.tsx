@@ -75,6 +75,7 @@ export default function GeneratePublicationReport() {
               <TableHead>#</TableHead>
               <TableHead>Publication Code</TableHead>
               <TableHead>Count</TableHead>
+              <TableHead>Updated At</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -103,6 +104,11 @@ export default function GeneratePublicationReport() {
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{p.publication_id}</TableCell>
                       <TableCell>{p.count}</TableCell>
+                      <TableCell>
+                        {p.updatedAt
+                          ? new Date(p.updatedAt).toLocaleString().split(",")[0]
+                          : "N/A"}
+                      </TableCell>
                     </TableRow>
                   ))}
               </React.Fragment>

@@ -12,6 +12,11 @@ export async function getPublication() {
         lt: endOfMonth, // less than first day of next month
       },
     },
+    select:{
+      publication_id: true,
+      count: true,
+      updatedAt: true,
+    },
     orderBy: { updatedAt: "desc" },
   });
 }

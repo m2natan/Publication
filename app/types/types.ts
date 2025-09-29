@@ -6,6 +6,7 @@ import {
 export interface Publication {
   publication_id: string;
   count: number;
+  updatedAt: Date;
 }
 
 export type PublicationFormData = {
