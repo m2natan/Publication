@@ -2,8 +2,8 @@ import { prisma } from "@/lib/prisma";
 
 export async function getPublication() {
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
   return await prisma.publication.findMany({
     where: {
@@ -12,7 +12,7 @@ export async function getPublication() {
         lt: endOfMonth, // less than first day of next month
       },
     },
-    select:{
+    select: {
       publication_id: true,
       count: true,
       updatedAt: true,
